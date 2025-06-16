@@ -20,3 +20,4 @@ composer-setup.php
 *.swp
 *.swo
 
+.ssh/
