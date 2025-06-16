@@ -1,11 +1,22 @@
+# Ignore shell and history files
+.bash*
+.viminfo
+.lesshst
+.mysql_history
+
+# Composer junk
 .cache/
 .config/
 .local/
-.ssh/
 .terraform.d/
+
+# Logs
 *.log
-*.history
-.bash*
-.viminfo
-*.php
-.gitconfig
+
+# PHP installer
+composer-setup.php
+
+# Ignore hidden system files
+*.swp
+*.swo
+
