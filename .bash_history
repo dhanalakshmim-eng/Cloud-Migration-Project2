@@ -456,3 +456,155 @@ php bin/console cache:warmup --env=prod
 sudo systemctl restart php-fpm
 sudo systemctl restart nginx
 tail -n 30 var/log/prod.log
+sudo mysql -u root
+mysql -u root -p
+nano .env.local
+nano .env
+cd /home/ec2-user/kimai
+nano .env.local
+nano .env
+php bin/console doctrine:migrations:migrate
+nano .env
+php bin/console doctrine:migrations:migrate
+php bin/console cache:clear --env=prod
+sudo systemctl restart nginx php-fpm
+cd /home/ec2-user/kimai
+php bin/console kimai:create-user
+php bin/console
+php bin/console kimai:user:create
+php bin/console kimai:user:create angeline angel@hey.com ROLE_SUPER_ADMIN 123
+php bin/console kimai:user:create angeline angel@hey.com ROLE_SUPER_ADMIN 12345678
+git pull
+git branch
+git checkout main
+git pull origin main
+git remote -v
+git fetch origin
+git log HEAD..origin/main --oneline
+git merge origin/main
+git pull origin main
+ls
+cd`
+;
+~
+
+;
+fwrf
+
+rgregerg
+ 
+..
+ ..
+
+m
+n
+
+cd ..
+cd~
+cd ~
+ls
+git pull origin main
+ls
+cat HLD.pdf
+ls
+git add.
+git add .
+git push
+cd ~/terraform
+terraform init
+terraform validate
+ls
+mkdir terraform
+ls
+cd terraform
+vim main.tf
+vim variables.tf
+vim provider.tf
+vim output.tf
+cd terraform
+terraform init
+sudo yum remove terraform -y
+sudo dnf install -y yum-utils
+sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
+sudo yum install -y terraform
+terraform -v
+terraform init
+terraform plan
+terraform init
+terraform plan
+terraform apply
+terraform import aws_instance.kimai i-00fc4705ceae13b68
+     + instance_market_options (known after apply)
+      + maintenance_options (known after apply)
+      + metadata_options (known after apply)
+      + network_interface (known after apply)
+      + private_dns_name_options (known after apply)
+      + root_block_device (known after apply)
+    }
+Plan: 1 to add, 0 to change, 0 to destroy.
+Changes to Outputs:
+  + instance_id = (known after apply)
+  + public_ip   = (known after apply)
+Do you want to perform these actions?
+  Terraform will perform the actions described above.
+  Only 'yes' will be accepted to approve.
+  Enter a value: yes
+aws_instance.kimai: Creating...
+aws_instance.kimai: Still creating... [00m10s elapsed]
+aws_instance.kimai: Creation complete after 12s [id=i-003ead0ff41634b3e]
+Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
+Outputs:
+instance_id = "i-003ead0ff41634b3e"
+public_ip = "13.61.176.36"
+[ec2-user@ip-172-31-35-246 terraform]$ terraform import aws_instance.kimai i-00fc4705ceae13b68
+aws_instance.kimai: Importing from ID "i-00fc4705ceae13b68"...
+aws_instance.kimai: Import prepared!
+  Prepared aws_instance for import
+╷
+│ Error: Resource already managed by Terraform
+│
+│ Terraform is already managing a remote object for aws_instance.kimai. To import to this address you must first remove the existing object from the state.
+╵
+[ec2-user@ip-172-31-35-246 terraform]$
+terraform destroy
+terraform import aws_instance.kimai i-00fc4705ceae13b68
+terraform plan
+vim main.tf
+vim terraform.tfvars
+vim provider.tf
+ls
+cd terraform
+ls
+vim provider.tf
+vim variables.tf
+vim main.tf
+vim outputs.tf
+ls
+rm output.tf
+ls
+mkdir modules
+cd modules
+mkdir ec2
+cd ec2
+vim main.tf
+terraform fmt
+terraform init
+terraform plan
+terraform init
+cd ~/terraform
+terraform plan
+vim main.tf
+vim provider.tf
+terraform {
+  backend "s3" {
+    bucket         = "my-techforce-terraform-state"  # must exist!
+    key            = "kimai/terraform.tfstate"
+    region         = "eu-north-1"
+    dynamodb_table = "terraform-lock-table"          # optional for locking
+  }
+}
+provider "aws" {
+  region = "eu-north-1"
+}
+~                                                                                                                                    ~                                                                                                                                    ~                                                   
+aws s3api create-bucket   --bucket my-techforce-terraform-state   --region eu-north-1   --create-bucket-configuration LocationConstraint=eu-north-1
