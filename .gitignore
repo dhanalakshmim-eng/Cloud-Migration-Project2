@@ -1,0 +1,11 @@
+.cache/
+.config/
+.local/
+.ssh/
+.terraform.d/
+*.log
+*.history
+.bash*
+.viminfo
+*.php
+.gitconfig
