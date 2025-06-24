@@ -3,7 +3,7 @@ pipeline {
 
   environment {
     IMAGE_NAME = "angeline190/kimai-prod"
-    EC2_HOST   = "13.48.47.64"           // your EC2 public IP
+    EC2_HOST   = "13.48.47.64"
   }
 
   stages {
@@ -43,16 +43,18 @@ pipeline {
         sshagent(['ec2-ssh-creds']) {
           sh """
             ssh -o StrictHostKeyChecking=no ec2-user@$EC2_HOST << 'EOF'
-              # pull latest image
               docker pull $IMAGE_NAME
 
-              # stop & remove old container
               docker stop kimai_app || true
-              docker rm kimai_app  || true
+              docker rm kimai_app || true
 
-              # start new one, mapping host 8001→container 8001
               docker run -d \\
                 --name kimai_app \\
+                --network host \\
+                -e DATABASE_URL="mysql://kimai:Angeline@localhost:3306/kimai" \\
+                -e APP_ENV=prod \\
+                -e ADMINMAIL=admin@example.com \\
+                -e ADMINPASS=Angeline \\
                 -p 8001:8001 \\
                 $IMAGE_NAME
             EOF
