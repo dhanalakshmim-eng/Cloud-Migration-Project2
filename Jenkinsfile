@@ -1,75 +1,58 @@
 pipeline {
-  agent any
+    agent any
 
-  environment {
-    IMAGE_NAME = "angeline190/kimai-prod"
-    EC2_HOST   = "13.48.47.64"
-  }
-
-  stages {
-    stage('Checkout') {
-      steps {
-        git branch: 'main',
-            url: 'https://github.com/angelinedev/Cloud-Migration-Project.git'
-      }
+    environment {
+        DOCKER_IMAGE = 'angeline190/kimai-prod'
+        EC2_HOST = 'ec2-user@13.48.47.64'
     }
 
-    stage('Build Docker Image') {
-      steps {
-        sh 'docker build -t $IMAGE_NAME ./kimai'
-      }
-    }
-
-    stage('Push to DockerHub') {
-      steps {
-        withCredentials([
-          usernamePassword(
-            credentialsId: 'dockerhub-creds',
-            usernameVariable: 'DOCKER_USER',
-            passwordVariable: 'DOCKER_PASS'
-          )
-        ]) {
-          sh '''
-            echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-            docker push $IMAGE_NAME
-          '''
+    stages {
+        stage('Checkout') {
+            steps {
+                git url: 'https://github.com/angelinedev/Cloud-Migration-Project.git', branch: 'main'
+            }
         }
-      }
-    }
 
-    stage('Deploy to EC2') {
-      steps {
-        echo "Deploying $IMAGE_NAME to EC2@$EC2_HOST"
-        sshagent(['ec2-ssh-creds']) {
-          sh """
-            ssh -o StrictHostKeyChecking=no ec2-user@$EC2_HOST << EOF
-              docker pull ${IMAGE_NAME}
-
-              docker stop kimai_app || true
-              docker rm kimai_app || true
-
-              docker run -d \\
-                --name kimai_app \\
-                --network host \\
-                -e DATABASE_URL="mysql://kimai:angeline@localhost:3306/kimai" \\
-                -e APP_ENV=prod \\
-                -e ADMINMAIL=admin@example.com \\
-                -e ADMINPASS=angeline \\
-                -p 8001:8001 \\
-                ${IMAGE_NAME}
-            EOF
-          """
+        stage('Build Docker Image') {
+            steps {
+                sh "docker build -t ${DOCKER_IMAGE} ./kimai"
+            }
         }
-      }
-    }
-  }
 
-  post {
-    success {
-      echo '🎉 Deployment succeeded!'
+        stage('Push to DockerHub') {
+            steps {
+                withCredentials([string(credentialsId: 'dockerhub-password', variable: 'DOCKER_PASS')]) {
+                    sh """
+                        echo $DOCKER_PASS | docker login -u angeline190 --password-stdin
+                        docker push ${DOCKER_IMAGE}
+                    """
+                }
+            }
+        }
+
+        stage('Deploy to EC2') {
+            steps {
+                echo "Deploying ${DOCKER_IMAGE} to ${EC2_HOST}"
+                sshagent (credentials: ['ec2-user']) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ${EC2_HOST} << 'EOF'
+                        docker pull ${DOCKER_IMAGE}
+                        docker stop kimai_app || true
+                        docker rm kimai_app || true
+                        docker run -d --name kimai_app --restart always -p 80:8001 ${DOCKER_IMAGE}
+                        EOF
+                    """
+                }
+            }
+        }
     }
-    failure {
-      echo '💥 Deployment failed!'
+
+    post {
+        failure {
+            echo '💥 Deployment failed!'
+        }
+        success {
+            echo '✅ Deployment successful!'
+        }
     }
-  }
 }
