@@ -19,21 +19,21 @@ stage('Deploy to EC2') {
     withCredentials([sshUserPrivateKey(credentialsId: 'ec2-ssh-creds', keyFileVariable: 'KEY')]) {
       sh '''
         ssh -o StrictHostKeyChecking=no -i $KEY ec2-user@13.48.47.64 << 'ENDSSH'
-          echo "✅ SSH Connected!"
-          cd Cloud-Migration-Project/kimai
+echo "✅ SSH Connected!"
 
-          echo "🧹 Stopping & removing old containers..."
-          docker-compose down || true
+cd Cloud-Migration-Project/kimai
 
-          echo "🚀 Starting fresh containers with Compose..."
-          docker-compose pull
-          docker-compose up -d
-        ENDSSH
+echo "🧹 Stopping & removing old containers..."
+docker-compose down
+
+echo "🚀 Starting fresh containers with Compose..."
+docker-compose pull
+docker-compose up -d
+ENDSSH
       '''
     }
   }
 }
-
 
 
     }
