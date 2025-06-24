@@ -41,24 +41,24 @@ pipeline {
       steps {
         echo "Deploying $IMAGE_NAME to EC2@$EC2_HOST"
         sshagent(['ec2-ssh-creds']) {
-          sh '''
-ssh -o StrictHostKeyChecking=no ec2-user@$EC2_HOST << 'EOF'
-docker pull $IMAGE_NAME
+          sh """
+            ssh -o StrictHostKeyChecking=no ec2-user@$EC2_HOST << EOF
+              docker pull ${IMAGE_NAME}
 
-docker stop kimai_app || true
-docker rm kimai_app || true
+              docker stop kimai_app || true
+              docker rm kimai_app || true
 
-docker run -d \\
-  --name kimai_app \\
-  --network host \\
-  -e DATABASE_URL="mysql://kimai:Angeline@localhost:3306/kimai" \\
-  -e APP_ENV=prod \\
-  -e ADMINMAIL=admin@example.com \\
-  -e ADMINPASS=Angeline \\
-  -p 8001:8001 \\
-  $IMAGE_NAME
-EOF
-          '''
+              docker run -d \\
+                --name kimai_app \\
+                --network host \\
+                -e DATABASE_URL="mysql://kimai:angeline@localhost:3306/kimai" \\
+                -e APP_ENV=prod \\
+                -e ADMINMAIL=admin@example.com \\
+                -e ADMINPASS=angeline \\
+                -p 8001:8001 \\
+                ${IMAGE_NAME}
+            EOF
+          """
         }
       }
     }
