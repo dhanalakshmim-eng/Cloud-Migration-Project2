@@ -3,24 +3,32 @@ pipeline {
 
   environment {
     IMAGE_NAME = "angeline190/kimai-prod"
+    EC2_HOST   = "13.48.47.64"           // your EC2 public IP
   }
 
   stages {
     stage('Checkout') {
       steps {
-        git branch: 'main', url: 'https://github.com/angelinedev/Cloud-Migration-Project.git'
+        git branch: 'main',
+            url: 'https://github.com/angelinedev/Cloud-Migration-Project.git'
       }
     }
 
     stage('Build Docker Image') {
       steps {
-        sh 'docker build -t angeline190/kimai-prod ./kimai'
+        sh 'docker build -t $IMAGE_NAME ./kimai'
       }
     }
 
     stage('Push to DockerHub') {
       steps {
-        withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+        withCredentials([
+          usernamePassword(
+            credentialsId: 'dockerhub-creds',
+            usernameVariable: 'DOCKER_USER',
+            passwordVariable: 'DOCKER_PASS'
+          )
+        ]) {
           sh '''
             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
             docker push $IMAGE_NAME
@@ -29,13 +37,37 @@ pipeline {
       }
     }
 
-    stage('Deploy') {
+    stage('Deploy to EC2') {
       steps {
-        echo 'Deploying to EC2...'
-        // Optional: you can add SSH script to restart container here
-        // Or automate with Ansible/scripts later 💪
+        echo "Deploying $IMAGE_NAME to EC2@$EC2_HOST"
+        sshagent(['ec2-ssh-creds']) {
+          sh """
+            ssh -o StrictHostKeyChecking=no ec2-user@$EC2_HOST << 'EOF'
+              # pull latest image
+              docker pull $IMAGE_NAME
+
+              # stop & remove old container
+              docker stop kimai_app || true
+              docker rm kimai_app  || true
+
+              # start new one, mapping host 8001→container 8001
+              docker run -d \\
+                --name kimai_app \\
+                -p 8001:8001 \\
+                $IMAGE_NAME
+            EOF
+          """
+        }
       }
     }
   }
-}
 
+  post {
+    success {
+      echo '🎉 Deployment succeeded!'
+    }
+    failure {
+      echo '💥 Deployment failed!'
+    }
+  }
+}
