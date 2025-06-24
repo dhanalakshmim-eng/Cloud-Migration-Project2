@@ -1,4 +1,3 @@
-[ec2-user@ip-172-31-12-187 Cloud-Migration-Project]$ cat Jenkinsfile
 pipeline {
   agent any
 
@@ -9,7 +8,7 @@ pipeline {
 
   stages {
     stage('Checkout') {
-              steps {
+      steps {
         git branch: 'main',
             url: 'https://github.com/angelinedev/Cloud-Migration-Project.git'
       }
@@ -52,10 +51,10 @@ docker rm kimai_app || true
 docker run -d \\
   --name kimai_app \\
   --network host \\
-  -e DATABASE_URL="mysql://kimai:angeline@localhost:3306/kimai" \\
+  -e DATABASE_URL="mysql://kimai:Angeline@localhost:3306/kimai" \\
   -e APP_ENV=prod \\
   -e ADMINMAIL=admin@example.com \\
-  -e ADMINPASS=angeline \\
+  -e ADMINPASS=Angeline \\
   -p 8001:8001 \\
   $IMAGE_NAME
 EOF
@@ -74,5 +73,3 @@ EOF
     }
   }
 }
-
-[ec2-user@ip-172-31-12-187 Cloud-Migration-Project]$
