@@ -17,14 +17,22 @@ pipeline {
         stage('Deploy to EC2') {
             steps {
                 withCredentials([sshUserPrivateKey(credentialsId: 'ec2-ssh-creds', keyFileVariable: 'KEY')]) {
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no -i $KEY $REMOTE_USER@$REMOTE_HOST <<EOF
-                            echo "✅ SSH Connected!"
-                            sudo systemctl restart docker
-                            echo "🔥 Simulating deployment..."
-                            # you can put your git pull or file transfer logic here if needed
+                    sh """
+                        ssh -o StrictHostKeyChecking=no -i \$KEY \$REMOTE_USER@\$REMOTE_HOST << 'EOF'
+                        echo "✅ SSH Connected!"
+                        sudo systemctl restart docker
+                        echo "🔥 Pulling latest image..."
+                        docker pull angeline190/kimai-prod
+                        echo "🧹 Cleaning old container..."
+                        docker stop kimai_app || true
+                        docker rm kimai_app || true
+                        echo "🚀 Starting new container..."
+                        docker run -d \\
+                          --name kimai_app \\
+                          -p 8001:8001 \\
+                          angeline190/kimai-prod
                         EOF
-                    '''
+                    """
                 }
             }
         }
