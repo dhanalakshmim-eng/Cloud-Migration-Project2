@@ -17,7 +17,7 @@ pipeline {
 stage('Deploy to EC2') {
   steps {
     withCredentials([sshUserPrivateKey(credentialsId: 'ec2-user-creds', keyFileVariable: 'KEY')]) {
-      sh '''
+      sh """
         ssh -o StrictHostKeyChecking=no -i $KEY REMOTE_USER@REMOTE_HOST << 'ENDSSH'
 echo "✅ SSH Connected!"
 
@@ -30,7 +30,7 @@ echo "🚀 Starting fresh containers with Compose..."
 docker-compose pull
 docker-compose up -d
 ENDSSH
-      '''
+      """
     }
   }
 }
