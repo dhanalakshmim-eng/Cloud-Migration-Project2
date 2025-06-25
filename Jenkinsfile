@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        REMOTE_HOST = '13.48.47.64'
+        REMOTE_HOST = '13.60.199.9'
         REMOTE_USER = 'ec2-user'
         IMAGE_NAME = 'angeline190/kimai-prod'
     }
@@ -18,7 +18,7 @@ stage('Deploy to EC2') {
   steps {
     withCredentials([sshUserPrivateKey(credentialsId: 'ec2-user-creds', keyFileVariable: 'KEY')]) {
       sh '''
-        ssh -o StrictHostKeyChecking=no -i $KEY ec2-user@13.48.47.64 << 'ENDSSH'
+        ssh -o StrictHostKeyChecking=no -i $KEY ec2-user@13.60.199.9 << 'ENDSSH'
 echo "✅ SSH Connected!"
 
 cd Cloud-Migration-Project/kimai
