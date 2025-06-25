@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/angelinedev/Cloud-Migration-Project.git'
+                git branch: 'main', url: 'https://github.com/dhanalakshmim-eng/Cloud-Migration-Project2.git'
             }
         }
 
