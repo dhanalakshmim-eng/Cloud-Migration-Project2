@@ -16,7 +16,7 @@ pipeline {
 
 stage('Deploy to EC2') {
   steps {
-    withCredentials([sshUserPrivateKey(credentialsId: 'ec2-ssh-creds', keyFileVariable: 'KEY')]) {
+    withCredentials([sshUserPrivateKey(credentialsId: 'ec2-user-creds', keyFileVariable: 'KEY')]) {
       sh '''
         ssh -o StrictHostKeyChecking=no -i $KEY ec2-user@13.48.47.64 << 'ENDSSH'
 echo "✅ SSH Connected!"
